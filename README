@@ -1,16 +1,127 @@
-Role: You are a Principal MLOps Architect and Infrastructure as Code (IaC) Expert.
+# DGX-Spark-Server 🚀
+### Automated GPU-Accelerated Distributed Data Architecture for Multi-Node DGX Clusters
 
-Context: 
-I am initializing a new open-source repository named **DGX-Spark-Server**. The goal of this project is to build an automated, high-performance, and secure blueprint for deploying an Apache Spark cluster on an NVIDIA DGX server (or a multi-GPU home server emulation) optimized for distributed AI/ML data processing pipelines. 
+[![License: GPL v3](https://shields.io)](https://gnu.org)
+[![Infrastructure](https://shields.io)](#)
+[![Security Layer](https://shields.io)](#)
 
-To ensure complete operational agility and security, I will be accessing this home-based infrastructure from my corporate office using a secure VPN (such as WireGuard or Tailscale). I want this infrastructure setup to be completely automated.
+An enterprise-grade, infrastructure-as-code (IaC) blueprint designed to build, configure, and automate high-performance **Apache Spark Clusters** on top of bare-metal **NVIDIA DGX Systems**. 
 
-Architectural Scope for DGX-Spark-Server:
-1. Multi-Node Spark Configuration: Automated setup of Spark Master and GPU-enabled Spark Workers utilizing Docker/Containerd.
-2. NVIDIA GPU Integration: Ensuring Apache Spark can leverage NVIDIA GPUs via RAPIDS Accelerator or specialized CUDA configuration.
-3. Secure Remote Access: An automated setup blueprint for a secure, isolated WireGuard/Tailscale VPN to allow remote connection from my workplace to the home server safely.
+This repository provides full automation templates using **Ansible** and **Docker** to enable distributed Big Data pipelines, low-latency LLM data preprocessing, and decentralized model fine-tuning across a cluster of interconnected DGX appliances.
 
-Your Task:
-Provide me with the foundational project directory structure for this repository and write a high-level architecture overview and the initial setup guide in Markdown for the **README.md** file. 
+---
 
-(Please design this with an Enterprise-grade Look and Feel, keeping it aligned with my premium production coding style).
+## 🏗️ Architectural Topology
+
+The core architecture operates over an isolated, secure overlay network allowing seamless access from corporate workspaces to the specialized hardware cluster via a zero-trust Mesh VPN layer.
+
+Use code with caution.
++------------------------------------------+
+|          Corporate Workspace             |
+|   (Laptop w/ NVIDIA Sync + VS Code)      |
++--------------------+---------------------+
+|
+[ Secure VPN Tunnel ]
+|
++--------------------+---------------------+
+|         Private Overlay Network          |
+|    (Tailscale / WireGuard Mesh VPN)      |
++--------------------+---------------------+
+|
++---------------+---------------+
+|                               |
+v                               v
++----+-------------------+       +---+-------------------+
+|  DGX Node 01 (Master)  |       |  DGX Node 02 (Worker) |
+|  - IP: 100.64.0.1      |       |  - IP: 100.64.0.2      |
+|  - ConnectX-7 Network  |<=====>|  - ConnectX-7 Network  |
+|  - Apache Spark Master |       |  - Apache Spark Worker |
++------------------------+       +-----------------------+
+
+---
+
+## 🔒 Network & Security Layer (VPN Implementation)
+
+To protect corporate pipelines and maintain absolute compliance when handling sovereign data environments, the entire physical hardware matrix is completely isolated from the public internet. 
+
+* **Zero Public Exposure:** The DGX nodes do not expose any listening ports to the public WAN.
+* **Encrypted Overlay Mesh:** Remote system management, telemetry tracking, and tool access (VS Code, terminal instances, DGX Dashboard) run exclusively through an encrypted overlay network (using **WireGuard** or **Tailscale** with strict ACLs).
+* **Static Virtual Routing:** By using persistent node allocation, internal assets remain reachable through static secure IPs (`100.64.X.X`) regardless of underlying local WAN physical changes.
+
+---
+
+## 🎛️ Cluster Orchestration: NVIDIA Sync + Apache Spark
+
+This deployment pattern leverages **NVIDIA Sync** for hardware-level topologies and overlays the software ecosystem on top to maximize compute performance.
+
+### 🎥 Hardware Interconnect & Validation Video
+For a comprehensive overview of how to connect and validate multi-node configurations over secure networks using the Cluster Assistant, refer to the official walkthrough below:
+
+[![How to Connect Two DGX Sparks with NVIDIA Sync](https://shields.io)](https://youtu.be)
+
+*Click the badge above to watch the step-by-step connection process.*
+
+### 1. Hardware Interconnect Mechanics (NVIDIA Sync)
+* **High-Speed Interconnect:** Multiple DGX nodes are interconnected using high-bandwidth **ConnectX-7 network cards**.
+* **Automated Provisioning:** NVIDIA Sync automates underlying fabric configuration, checks inter-device network bandwidth limits, validates low-latency tolerances, and deploys localized cluster-level key-based SSH access across nodes.
+* **VPN Target Execution:** Since the nodes sit on a secured remote network relative to the operator’s corporate workspace, nodes are targeted explicitly inside NVIDIA Sync using their actual, secure VPN virtual IP addresses.
+
+### 2. Distributed Compute Layout (Apache Spark Engine)
+While NVIDIA Sync handles the hardware validation and link orchestration, this repository delivers the software playbook layers:
+* **RAPIDS Accelerator Integration:** Automatically links Apache Spark executors directly into physical NVIDIA GPUs via the RAPIDS Accelerator plugin, routing matrix workloads directly into CUDA cores.
+* **Distributed Workloads:** Provisions automated containerized execution of distributed frameworks across the ConnectX-7 high-bandwidth link.
+
+---
+
+## 📁 Repository Directory Structure
+
+```text
+├── .gitlab/                  # GitLab CI/CD Automation Pipelines
+├── ansible/
+│   ├── inventory/            # Hosts inventory mapping secure VPN IPs
+│   ├── playbooks/
+│   │   ├── system_prep.yml   # Configures NVIDIA Drivers, CUDA, and Container Toolkit
+│   │   ├── vpn_setup.yml     # Automated configuration of WireGuard/Tailscale Mesh
+│   │   └── spark_deploy.yml  # Compiles and deploys distributed Apache Spark nodes
+│   └── roles/                # Modular Ansible configuration components
+├── docker/
+│   ├── Dockerfile.spark      # Custom Spark build integrated with NVIDIA RAPIDS Toolkit
+│   └── docker-compose.yml    # Spark cluster composition files (Master/Worker Topologies)
+├── config/
+│   └── spark-defaults.conf   # Optimized hardware properties configuration
+├── LICENSE                   # GPL-3.0 Strict Legal Copyleft Shield
+└── README.md                 # Technical Operations Blueprint
+```
+
+---
+
+## 🚀 Step-by-Step Provisioning Guide
+
+### Step 1: Secure Overlay Networking
+Initialize your secure mesh loop onto your remote server instances. Ensure all targeted hosts can ping each other through the established interface.
+```bash
+# Example establishing secure overlay node mapping
+tailscale up --authkey=tskey-auth-sample-key-here
+```
+
+### Step 2: System Automation via Ansible
+Run the provisioning playbooks to secure dependencies, ensure driver matching, and initialize container configurations across your host mapping matrix.
+```bash
+ansible-playbook -i ansible/inventory/hosts.ini ansible/playbooks/system_prep.yml
+```
+
+### Step 3: Hardware Interconnect Validation
+1. Fire up the **NVIDIA Sync Application** on your workstation.
+2. Input the respective secure VPN IP targets to locate the physical hosts.
+3. Run the **Cluster Assistant** to configure key-based automated SSH links and validate link bandwidth metrics across the ConnectX-7 architecture.
+
+### Step 4: Spark Cluster Spinning
+Deploy the fully integrated distributed framework cluster via the automated orchestration loop.
+```bash
+ansible-playbook -i ansible/inventory/hosts.ini ansible/playbooks/spark_deploy.yml
+```
+
+---
+
+## ⚖️ License
+This project is licensed under the **GPL-3.0 License** - see the [LICENSE](LICENSE) file for details. Any downstream modifications, tool integrations, or embedded deployments of this architecture must remain open-source under the identical copyleft provisions of the GNU General Public License v3.0.
