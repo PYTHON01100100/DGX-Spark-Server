@@ -1,0 +1,16 @@
+Role: You are a Principal MLOps Architect and Infrastructure as Code (IaC) Expert.
+
+Context: 
+I am initializing a new open-source repository named **DGX-Spark-Server**. The goal of this project is to build an automated, high-performance, and secure blueprint for deploying an Apache Spark cluster on an NVIDIA DGX server (or a multi-GPU home server emulation) optimized for distributed AI/ML data processing pipelines. 
+
+To ensure complete operational agility and security, I will be accessing this home-based infrastructure from my corporate office using a secure VPN (such as WireGuard or Tailscale). I want this infrastructure setup to be completely automated.
+
+Architectural Scope for DGX-Spark-Server:
+1. Multi-Node Spark Configuration: Automated setup of Spark Master and GPU-enabled Spark Workers utilizing Docker/Containerd.
+2. NVIDIA GPU Integration: Ensuring Apache Spark can leverage NVIDIA GPUs via RAPIDS Accelerator or specialized CUDA configuration.
+3. Secure Remote Access: An automated setup blueprint for a secure, isolated WireGuard/Tailscale VPN to allow remote connection from my workplace to the home server safely.
+
+Your Task:
+Provide me with the foundational project directory structure for this repository and write a high-level architecture overview and the initial setup guide in Markdown for the **README.md** file. 
+
+(Please design this with an Enterprise-grade Look and Feel, keeping it aligned with my premium production coding style).
